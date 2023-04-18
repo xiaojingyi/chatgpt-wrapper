@@ -37,6 +37,13 @@ class OpenAIAPI(Backend):
             self.set_current_user(user)
 
     def _configure_access_info(self):
+        socks_proxy = os.getenv("OPENAI_SPROXY")
+        if not socks_proxy:
+            raise Exception("OPENAI_SPROXY must be set!")
+        openai.proxy={
+                "http": socks_proxy,
+                "https": socks_proxy,
+                }
         self.openai = openai
         profile_prefix = f"PROFILE_{self.config.profile.upper()}"
         self.openai.organization = os.getenv(f"{profile_prefix}_OPENAI_ORG_ID")
